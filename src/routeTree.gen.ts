@@ -8,51 +8,67 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createFileRoute } from '@tanstack/react-router'
-
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-
-// Create Virtual Routes
-
-const SettingsLazyImport = createFileRoute('/settings')()
-const ReportsLazyImport = createFileRoute('/reports')()
-const GenerateLazyImport = createFileRoute('/generate')()
-const AnalyticsLazyImport = createFileRoute('/analytics')()
-const IndexLazyImport = createFileRoute('/')()
+import { Route as LoginImport } from './routes/login'
+import { Route as UserRouteImport } from './routes/user/route'
+import { Route as IndexImport } from './routes/index'
+import { Route as UserSettingsImport } from './routes/user/settings'
+import { Route as UserReportsImport } from './routes/user/reports'
+import { Route as UserGenerateImport } from './routes/user/generate'
+import { Route as UserDashboardImport } from './routes/user/dashboard'
+import { Route as UserAnalyticsImport } from './routes/user/analytics'
 
 // Create/Update Routes
 
-const SettingsLazyRoute = SettingsLazyImport.update({
-  id: '/settings',
-  path: '/settings',
+const LoginRoute = LoginImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/settings.lazy').then((d) => d.Route))
+} as any)
 
-const ReportsLazyRoute = ReportsLazyImport.update({
-  id: '/reports',
-  path: '/reports',
+const UserRouteRoute = UserRouteImport.update({
+  id: '/user',
+  path: '/user',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/reports.lazy').then((d) => d.Route))
+} as any)
 
-const GenerateLazyRoute = GenerateLazyImport.update({
-  id: '/generate',
-  path: '/generate',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/generate.lazy').then((d) => d.Route))
-
-const AnalyticsLazyRoute = AnalyticsLazyImport.update({
-  id: '/analytics',
-  path: '/analytics',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/analytics.lazy').then((d) => d.Route))
-
-const IndexLazyRoute = IndexLazyImport.update({
+const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+} as any)
+
+const UserSettingsRoute = UserSettingsImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => UserRouteRoute,
+} as any)
+
+const UserReportsRoute = UserReportsImport.update({
+  id: '/reports',
+  path: '/reports',
+  getParentRoute: () => UserRouteRoute,
+} as any)
+
+const UserGenerateRoute = UserGenerateImport.update({
+  id: '/generate',
+  path: '/generate',
+  getParentRoute: () => UserRouteRoute,
+} as any)
+
+const UserDashboardRoute = UserDashboardImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => UserRouteRoute,
+} as any)
+
+const UserAnalyticsRoute = UserAnalyticsImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => UserRouteRoute,
+} as any)
 
 // Populate the FileRoutesByPath interface
 
@@ -62,90 +78,161 @@ declare module '@tanstack/react-router' {
       id: '/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexLazyImport
+      preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/analytics': {
-      id: '/analytics'
+    '/user': {
+      id: '/user'
+      path: '/user'
+      fullPath: '/user'
+      preLoaderRoute: typeof UserRouteImport
+      parentRoute: typeof rootRoute
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginImport
+      parentRoute: typeof rootRoute
+    }
+    '/user/analytics': {
+      id: '/user/analytics'
       path: '/analytics'
-      fullPath: '/analytics'
-      preLoaderRoute: typeof AnalyticsLazyImport
-      parentRoute: typeof rootRoute
+      fullPath: '/user/analytics'
+      preLoaderRoute: typeof UserAnalyticsImport
+      parentRoute: typeof UserRouteImport
     }
-    '/generate': {
-      id: '/generate'
+    '/user/dashboard': {
+      id: '/user/dashboard'
+      path: '/dashboard'
+      fullPath: '/user/dashboard'
+      preLoaderRoute: typeof UserDashboardImport
+      parentRoute: typeof UserRouteImport
+    }
+    '/user/generate': {
+      id: '/user/generate'
       path: '/generate'
-      fullPath: '/generate'
-      preLoaderRoute: typeof GenerateLazyImport
-      parentRoute: typeof rootRoute
+      fullPath: '/user/generate'
+      preLoaderRoute: typeof UserGenerateImport
+      parentRoute: typeof UserRouteImport
     }
-    '/reports': {
-      id: '/reports'
+    '/user/reports': {
+      id: '/user/reports'
       path: '/reports'
-      fullPath: '/reports'
-      preLoaderRoute: typeof ReportsLazyImport
-      parentRoute: typeof rootRoute
+      fullPath: '/user/reports'
+      preLoaderRoute: typeof UserReportsImport
+      parentRoute: typeof UserRouteImport
     }
-    '/settings': {
-      id: '/settings'
+    '/user/settings': {
+      id: '/user/settings'
       path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof SettingsLazyImport
-      parentRoute: typeof rootRoute
+      fullPath: '/user/settings'
+      preLoaderRoute: typeof UserSettingsImport
+      parentRoute: typeof UserRouteImport
     }
   }
 }
 
 // Create and export the route tree
 
+interface UserRouteRouteChildren {
+  UserAnalyticsRoute: typeof UserAnalyticsRoute
+  UserDashboardRoute: typeof UserDashboardRoute
+  UserGenerateRoute: typeof UserGenerateRoute
+  UserReportsRoute: typeof UserReportsRoute
+  UserSettingsRoute: typeof UserSettingsRoute
+}
+
+const UserRouteRouteChildren: UserRouteRouteChildren = {
+  UserAnalyticsRoute: UserAnalyticsRoute,
+  UserDashboardRoute: UserDashboardRoute,
+  UserGenerateRoute: UserGenerateRoute,
+  UserReportsRoute: UserReportsRoute,
+  UserSettingsRoute: UserSettingsRoute,
+}
+
+const UserRouteRouteWithChildren = UserRouteRoute._addFileChildren(
+  UserRouteRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
-  '/': typeof IndexLazyRoute
-  '/analytics': typeof AnalyticsLazyRoute
-  '/generate': typeof GenerateLazyRoute
-  '/reports': typeof ReportsLazyRoute
-  '/settings': typeof SettingsLazyRoute
+  '/': typeof IndexRoute
+  '/user': typeof UserRouteRouteWithChildren
+  '/login': typeof LoginRoute
+  '/user/analytics': typeof UserAnalyticsRoute
+  '/user/dashboard': typeof UserDashboardRoute
+  '/user/generate': typeof UserGenerateRoute
+  '/user/reports': typeof UserReportsRoute
+  '/user/settings': typeof UserSettingsRoute
 }
 
 export interface FileRoutesByTo {
-  '/': typeof IndexLazyRoute
-  '/analytics': typeof AnalyticsLazyRoute
-  '/generate': typeof GenerateLazyRoute
-  '/reports': typeof ReportsLazyRoute
-  '/settings': typeof SettingsLazyRoute
+  '/': typeof IndexRoute
+  '/user': typeof UserRouteRouteWithChildren
+  '/login': typeof LoginRoute
+  '/user/analytics': typeof UserAnalyticsRoute
+  '/user/dashboard': typeof UserDashboardRoute
+  '/user/generate': typeof UserGenerateRoute
+  '/user/reports': typeof UserReportsRoute
+  '/user/settings': typeof UserSettingsRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/': typeof IndexLazyRoute
-  '/analytics': typeof AnalyticsLazyRoute
-  '/generate': typeof GenerateLazyRoute
-  '/reports': typeof ReportsLazyRoute
-  '/settings': typeof SettingsLazyRoute
+  '/': typeof IndexRoute
+  '/user': typeof UserRouteRouteWithChildren
+  '/login': typeof LoginRoute
+  '/user/analytics': typeof UserAnalyticsRoute
+  '/user/dashboard': typeof UserDashboardRoute
+  '/user/generate': typeof UserGenerateRoute
+  '/user/reports': typeof UserReportsRoute
+  '/user/settings': typeof UserSettingsRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/analytics' | '/generate' | '/reports' | '/settings'
+  fullPaths:
+    | '/'
+    | '/user'
+    | '/login'
+    | '/user/analytics'
+    | '/user/dashboard'
+    | '/user/generate'
+    | '/user/reports'
+    | '/user/settings'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/analytics' | '/generate' | '/reports' | '/settings'
-  id: '__root__' | '/' | '/analytics' | '/generate' | '/reports' | '/settings'
+  to:
+    | '/'
+    | '/user'
+    | '/login'
+    | '/user/analytics'
+    | '/user/dashboard'
+    | '/user/generate'
+    | '/user/reports'
+    | '/user/settings'
+  id:
+    | '__root__'
+    | '/'
+    | '/user'
+    | '/login'
+    | '/user/analytics'
+    | '/user/dashboard'
+    | '/user/generate'
+    | '/user/reports'
+    | '/user/settings'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
-  IndexLazyRoute: typeof IndexLazyRoute
-  AnalyticsLazyRoute: typeof AnalyticsLazyRoute
-  GenerateLazyRoute: typeof GenerateLazyRoute
-  ReportsLazyRoute: typeof ReportsLazyRoute
-  SettingsLazyRoute: typeof SettingsLazyRoute
+  IndexRoute: typeof IndexRoute
+  UserRouteRoute: typeof UserRouteRouteWithChildren
+  LoginRoute: typeof LoginRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexLazyRoute: IndexLazyRoute,
-  AnalyticsLazyRoute: AnalyticsLazyRoute,
-  GenerateLazyRoute: GenerateLazyRoute,
-  ReportsLazyRoute: ReportsLazyRoute,
-  SettingsLazyRoute: SettingsLazyRoute,
+  IndexRoute: IndexRoute,
+  UserRouteRoute: UserRouteRouteWithChildren,
+  LoginRoute: LoginRoute,
 }
 
 export const routeTree = rootRoute
@@ -159,26 +246,45 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/analytics",
-        "/generate",
-        "/reports",
-        "/settings"
+        "/user",
+        "/login"
       ]
     },
     "/": {
-      "filePath": "index.lazy.tsx"
+      "filePath": "index.tsx"
     },
-    "/analytics": {
-      "filePath": "analytics.lazy.tsx"
+    "/user": {
+      "filePath": "user/route.tsx",
+      "children": [
+        "/user/analytics",
+        "/user/dashboard",
+        "/user/generate",
+        "/user/reports",
+        "/user/settings"
+      ]
     },
-    "/generate": {
-      "filePath": "generate.lazy.tsx"
+    "/login": {
+      "filePath": "login.tsx"
     },
-    "/reports": {
-      "filePath": "reports.lazy.tsx"
+    "/user/analytics": {
+      "filePath": "user/analytics.tsx",
+      "parent": "/user"
     },
-    "/settings": {
-      "filePath": "settings.lazy.tsx"
+    "/user/dashboard": {
+      "filePath": "user/dashboard.tsx",
+      "parent": "/user"
+    },
+    "/user/generate": {
+      "filePath": "user/generate.tsx",
+      "parent": "/user"
+    },
+    "/user/reports": {
+      "filePath": "user/reports.tsx",
+      "parent": "/user"
+    },
+    "/user/settings": {
+      "filePath": "user/settings.tsx",
+      "parent": "/user"
     }
   }
 }
