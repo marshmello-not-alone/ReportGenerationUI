@@ -32,8 +32,6 @@ const RouteComponent = () => {
     queryFn: getReports,
   });
 
-  console.log("Fetched reports data:", data);
-
   return (
     <div className="container mx-auto py-6 max-w-7xl">
       <DataTable columns={columns} data={data} />

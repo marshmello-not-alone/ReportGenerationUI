@@ -56,7 +56,7 @@ export const formatFileExtension = (mimeType: string): string => {
     case "APPLICATION_JSON":
       return "json";
     default:
-      return "pdf";
+      return "p";
   }
 };
 

@@ -118,14 +118,13 @@ export const columns: ColumnDef<Report>[] = [
     cell: ({ row }) => {
       const status = row.getValue("status") as string;
       const reportId = row.original.id;
-      const customRequest = row.getValue("customRequest") as string;
       const mimeType = row.getValue("mimeType") as string;
 
       const downloadMutation = useDownloadReport();
 
       const handleDownload = () => {
         const fileExtension = formatFileExtension(mimeType);
-        const fileName = `${customRequest || "report"}.${fileExtension}`;
+        const fileName = `reportName.${fileExtension}`;
 
         downloadMutation.mutate({ reportId, fileName });
       };

@@ -11,6 +11,7 @@ export interface ApiReport {
   id: string;
   userId: string;
   reportType: string;
+  reportName: string;
   timeRange: string;
   mimeType: string;
   status: "READY" | "PROCESSING" | "FAILED";

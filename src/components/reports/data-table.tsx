@@ -64,13 +64,10 @@ export function DataTable<TData, TValue>({
           <Input
             placeholder="Filter by name..."
             value={
-              (table.getColumn("customRequest")?.getFilterValue() as string) ??
-              ""
+              (table.getColumn("reportName")?.getFilterValue() as string) ?? ""
             }
             onChange={(event) =>
-              table
-                .getColumn("customRequest")
-                ?.setFilterValue(event.target.value)
+              table.getColumn("reportName")?.setFilterValue(event.target.value)
             }
             className="max-w-sm"
           />
