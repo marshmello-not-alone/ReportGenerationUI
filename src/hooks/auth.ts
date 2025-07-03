@@ -1,13 +1,11 @@
-let isAuthenticated = false;
+import { queryClient } from "@/main";
 
-export function useAuth() {
-  return {
-    isAuthenticated: () => isAuthenticated,
-    login: () => {
-      isAuthenticated = true;
-    },
-    logout: () => {
-      isAuthenticated = false;
-    },
-  };
+export async function logout() {
+  await fetch("/api/auth/logout", {
+    method: "POST",
+    credentials: "include",
+  });
+
+  // Clear auth cache
+  await queryClient.invalidateQueries({ queryKey: ["auth"] });
 }

@@ -1,5 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useAuth } from "@/hooks/auth";
+import { createFileRoute, redirect } from "@tanstack/react-router";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -8,16 +7,24 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 
 export const Route = createFileRoute("/login")({
+  beforeLoad: async () => {
+    const res = await fetch("/api/auth/profile", {
+      credentials: "include",
+    });
+
+    console.log("Login route session status:", res.status);
+
+    if (res.ok) {
+      // If the user is already authenticated, redirect to the dashboard
+      throw redirect({ to: "/user/dashboard" });
+    }
+  },
   component: LoginPage,
 });
 
 function LoginPage() {
-  const navigate = useNavigate();
-  const auth = useAuth();
-
   const handleLogin = () => {
-    auth.login();
-    navigate({ to: "/user/dashboard" });
+    window.location.href = "/api/auth/google";
   };
 
   return (
@@ -79,7 +86,7 @@ function LoginPage() {
                 </div>
               </div>
 
-              <Button type="submit" className="w-full" onClick={handleLogin}>
+              <Button type="submit" className="w-full" onClick={() => {}}>
                 Sign in
               </Button>
             </form>
@@ -97,7 +104,11 @@ function LoginPage() {
               </div>
 
               <div className="mt-6 grid grid-cols-2 gap-4">
-                <Button variant="outline" className="w-full">
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={handleLogin}
+                >
                   <svg
                     viewBox="0 0 24 24"
                     aria-hidden="true"

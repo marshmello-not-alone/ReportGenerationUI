@@ -16,10 +16,10 @@ export type Report = ApiReport;
 
 export const columns: ColumnDef<Report>[] = [
   {
-    accessorKey: "customRequest",
+    accessorKey: "reportName",
     header: () => <div className="pl-4">Report title</div>,
     cell: ({ row }) => (
-      <div className="pl-4 font-medium">{row.getValue("customRequest")}</div>
+      <div className="pl-4 font-medium">{row.getValue("reportName")}</div>
     ),
     size: 300,
   },

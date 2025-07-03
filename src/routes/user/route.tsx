@@ -4,8 +4,9 @@ import {
   Outlet,
   redirect,
   useLocation,
+  useRouteContext,
+  useRouter,
 } from "@tanstack/react-router";
-import { useAuth } from "@/hooks/auth";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,19 +18,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Bell } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-
-const userNavigation = [
-  { name: "Your Profile", href: "/" },
-  { name: "Settings", href: "/user/settings" },
-  { name: "Sign out", href: "/login" },
-];
-
-const user = {
-  name: "Tom Cook",
-  email: "tom@example.com",
-  imageUrl:
-    "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-};
+import { logout } from "@/hooks/auth";
 
 const navigation = [
   {
@@ -65,19 +54,33 @@ const navigation = [
 ];
 
 export const Route = createFileRoute("/user")({
-  beforeLoad: () => {
-    const auth = useAuth();
-    if (!auth.isAuthenticated()) {
+  beforeLoad: async () => {
+    const res = await fetch("/api/auth/profile", {
+      credentials: "include",
+    });
+
+    if (!res.ok) {
       throw redirect({ to: "/login" });
     }
+
+    const data = await res.json();
+
+    return { user: data.user }; // Make this available in context
   },
   component: RouteComponent,
 });
 
 function RouteComponent() {
+  const router = useRouter();
   const location = useLocation();
+  const { user } = useRouteContext({ from: "/user" });
   const currentPage = navigation.find((page) => page.to === location.pathname);
   const currentTitle = currentPage?.title || "Dashboard";
+  const handleLogOut = async () => {
+    await logout();
+    router.navigate({ to: "/login" });
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       <nav className="bg-primary/80 px-2 sm:px-6 lg:px-30">
@@ -110,17 +113,23 @@ function RouteComponent() {
                     className="relative ml-3 text-primary-foreground hover:text-primary-foreground/80 hover:bg-primary-foreground/10"
                   >
                     <Avatar>
-                      <AvatarImage src={user.imageUrl} alt={user.name} />
-                      <AvatarFallback>{user.name[0]}</AvatarFallback>
+                      <AvatarImage src={user.avatar} alt={user.name} />
+                      <AvatarFallback>{user.name?.[0] ?? "?"}</AvatarFallback>
                     </Avatar>
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  {userNavigation.map((item) => (
-                    <DropdownMenuItem key={item.name}>
-                      <Link to={item.href}>{item.name}</Link>
-                    </DropdownMenuItem>
-                  ))}
+                  <DropdownMenuItem asChild>
+                    <Link to="/">Your Profile</Link>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem asChild>
+                    <Link to="/user/settings">Settings</Link>
+                  </DropdownMenuItem>
+
+                  <DropdownMenuItem onClick={handleLogOut}>
+                    Sign out
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>

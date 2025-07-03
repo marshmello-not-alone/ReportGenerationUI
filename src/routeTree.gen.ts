@@ -12,6 +12,7 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as LoginImport } from './routes/login'
+import { Route as SplatImport } from './routes/$'
 import { Route as UserRouteImport } from './routes/user/route'
 import { Route as IndexImport } from './routes/index'
 import { Route as UserSettingsImport } from './routes/user/settings'
@@ -19,12 +20,19 @@ import { Route as UserReportsImport } from './routes/user/reports'
 import { Route as UserGenerateImport } from './routes/user/generate'
 import { Route as UserDashboardImport } from './routes/user/dashboard'
 import { Route as UserAnalyticsImport } from './routes/user/analytics'
+import { Route as AuthCallbackImport } from './routes/auth/callback'
 
 // Create/Update Routes
 
 const LoginRoute = LoginImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const SplatRoute = SplatImport.update({
+  id: '/$',
+  path: '/$',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -70,6 +78,12 @@ const UserAnalyticsRoute = UserAnalyticsImport.update({
   getParentRoute: () => UserRouteRoute,
 } as any)
 
+const AuthCallbackRoute = AuthCallbackImport.update({
+  id: '/auth/callback',
+  path: '/auth/callback',
+  getParentRoute: () => rootRoute,
+} as any)
+
 // Populate the FileRoutesByPath interface
 
 declare module '@tanstack/react-router' {
@@ -88,11 +102,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof UserRouteImport
       parentRoute: typeof rootRoute
     }
+    '/$': {
+      id: '/$'
+      path: '/$'
+      fullPath: '/$'
+      preLoaderRoute: typeof SplatImport
+      parentRoute: typeof rootRoute
+    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginImport
+      parentRoute: typeof rootRoute
+    }
+    '/auth/callback': {
+      id: '/auth/callback'
+      path: '/auth/callback'
+      fullPath: '/auth/callback'
+      preLoaderRoute: typeof AuthCallbackImport
       parentRoute: typeof rootRoute
     }
     '/user/analytics': {
@@ -158,7 +186,9 @@ const UserRouteRouteWithChildren = UserRouteRoute._addFileChildren(
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/user': typeof UserRouteRouteWithChildren
+  '/$': typeof SplatRoute
   '/login': typeof LoginRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/user/analytics': typeof UserAnalyticsRoute
   '/user/dashboard': typeof UserDashboardRoute
   '/user/generate': typeof UserGenerateRoute
@@ -169,7 +199,9 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/user': typeof UserRouteRouteWithChildren
+  '/$': typeof SplatRoute
   '/login': typeof LoginRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/user/analytics': typeof UserAnalyticsRoute
   '/user/dashboard': typeof UserDashboardRoute
   '/user/generate': typeof UserGenerateRoute
@@ -181,7 +213,9 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/user': typeof UserRouteRouteWithChildren
+  '/$': typeof SplatRoute
   '/login': typeof LoginRoute
+  '/auth/callback': typeof AuthCallbackRoute
   '/user/analytics': typeof UserAnalyticsRoute
   '/user/dashboard': typeof UserDashboardRoute
   '/user/generate': typeof UserGenerateRoute
@@ -194,7 +228,9 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/user'
+    | '/$'
     | '/login'
+    | '/auth/callback'
     | '/user/analytics'
     | '/user/dashboard'
     | '/user/generate'
@@ -204,7 +240,9 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/user'
+    | '/$'
     | '/login'
+    | '/auth/callback'
     | '/user/analytics'
     | '/user/dashboard'
     | '/user/generate'
@@ -214,7 +252,9 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/user'
+    | '/$'
     | '/login'
+    | '/auth/callback'
     | '/user/analytics'
     | '/user/dashboard'
     | '/user/generate'
@@ -226,13 +266,17 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   UserRouteRoute: typeof UserRouteRouteWithChildren
+  SplatRoute: typeof SplatRoute
   LoginRoute: typeof LoginRoute
+  AuthCallbackRoute: typeof AuthCallbackRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   UserRouteRoute: UserRouteRouteWithChildren,
+  SplatRoute: SplatRoute,
   LoginRoute: LoginRoute,
+  AuthCallbackRoute: AuthCallbackRoute,
 }
 
 export const routeTree = rootRoute
@@ -247,7 +291,9 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/user",
-        "/login"
+        "/$",
+        "/login",
+        "/auth/callback"
       ]
     },
     "/": {
@@ -263,8 +309,14 @@ export const routeTree = rootRoute
         "/user/settings"
       ]
     },
+    "/$": {
+      "filePath": "$.tsx"
+    },
     "/login": {
       "filePath": "login.tsx"
+    },
+    "/auth/callback": {
+      "filePath": "auth/callback.tsx"
     },
     "/user/analytics": {
       "filePath": "user/analytics.tsx",
